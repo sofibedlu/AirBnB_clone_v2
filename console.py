@@ -33,6 +33,7 @@ class HBNBCommand(cmd.Cmd):
             }
 
     def check_arg(self, line, obj):
+        """check the given argument and set attr"""
         for item in line:
             if re.match(r"[\w]+=[\w\"\-\.]+", item):
                 att_name, att_val = item.split('=')
