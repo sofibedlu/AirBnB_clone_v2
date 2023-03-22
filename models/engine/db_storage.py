@@ -37,7 +37,7 @@ class DBStorage:
         """all objects depending of the class name"""
         new_dict = {}
         for clas in classes:
-            if cls is None or cls is classes[clas]:
+            if cls is None or cls is classes[clas] or cls is clas:
                 objs = self.__session.query(classes[clas]).all()
                 for obj in objs:
                     key = obj.__class__.name__ + '.' + obj.id
