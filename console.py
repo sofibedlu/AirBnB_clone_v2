@@ -140,9 +140,8 @@ class HBNBCommand(cmd.Cmd):
         if args.split()[1]:
             new_arg = args.split()[1:]
             self.check_arg(new_arg, new_instance)
-        storage.save()
+        new_instance.save()
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
