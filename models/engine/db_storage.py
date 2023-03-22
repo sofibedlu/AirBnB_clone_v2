@@ -5,10 +5,12 @@ import sqlalchemy
 from os import getenv
 import sqlalchemy
 from sqlalchemy import create_engine
-from salalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
+from models.state import State
+from models.city import City
+from models.base_model import BaseModel, Base
 
-classes = {"User": User, "State": State, "City": City,
-           "Amenity": Amenity, "Place": Place, "Review": Review}
+classes = {"State": State, "City": City}
 
 
 class DBStorage:
@@ -36,7 +38,7 @@ class DBStorage:
         new_dict = {}
         for clas in classes:
             if cls is None or cls is classes[clas]:
-                objs = self.__session.query(classes[clss]).all()
+                objs = self.__session.query(classes[clas]).all()
                 for obj in objs:
                     key = obj.__class__.name__ + '.' + obj.id
                     new_dict[key] = obj
@@ -57,7 +59,7 @@ class DBStorage:
 
     def reload(self):
         """create all tables in the database"""
-        Base.metadata.create_all(engine)
+        Base.metadata.create_all(self.__engine)
         ss_maker = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(ss_maker)
         self.__session = Session
