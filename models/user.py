@@ -4,6 +4,11 @@ import models
 from models.base_model import BaseModel, Base
 from sqlalchemy import String, Column
 from sqlalchemy.orm import relationship
+<<<<<<< HEAD
+=======
+from models.place import Place
+
+>>>>>>> 4a2919e46645f5a71afd31fc6ff82b249e42252a
 
 class User(BaseModel, Base):
     """This class defines a user by various attributes"""
