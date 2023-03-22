@@ -3,9 +3,22 @@
 import models
 import sqlalchemy
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from models.review import Review
+from models.amenity import Amenity
+
+if models.db_store == "db":
+    place_amenity = Table('place_amenity', Base.metadata,
+                          Column('place_id', String(60),
+                                 ForeignKey('places.id'),
+                                 primary_key=True,
+                                 nullable=False),
+                          Column('amenity_id', String(60),
+                                 ForeignKey('amenities.id'),
+                                 primary_key=True,
+                                 nullable=False)
+                          )
 
 
 class Place(BaseModel, Base):
@@ -30,6 +43,8 @@ class Place(BaseModel, Base):
         reviews = relationship("Review", backref="place",
                                cascade="all, delete")
         amenity_ids = []
+        amenities = relationship("Amenity", secondary='place_amenity',
+                                 viewonly=False, backref='place_amenities')
 
     else:
         city_id = ""
@@ -48,8 +63,25 @@ class Place(BaseModel, Base):
         def review(self):
             """getter method"""
             from models import storage
-            city_list = []
+            rev_list = []
             for obj in storage.all('Review').values():
-                if obj.state_id == self.id:
-                    city_list.append(obj)
-            return city_list
+                if obj.place_id == self.id:
+                    rev_list.append(obj)
+            return rev_list
+
+        @property
+        def amenities(self):
+
+            """getter method"""
+            from models import storage
+            ameni_list = []
+            for obj in storage.all('Amenity').values():
+                if obj.id in self.amenity_ids:
+                    ameni_list.append(obj)
+            return ameni_list
+
+        @setter
+        def amenities(self, obj):
+            if obj is not None and isinstance(obj, Amenity):
+                if obj.id not in self.amenity_ids:
+                    self.amenity_ids.append(obj.id)
