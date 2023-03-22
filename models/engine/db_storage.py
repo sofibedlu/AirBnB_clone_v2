@@ -1,10 +1,15 @@
 #!/usr/bin/python3
 """These is DBStorage class"""
+import os
+import sqlalchemy
+from os import getenv
 import sqlalchemy
 from sqlalchemy import create_engine
+from salalchemy.orm import sessionmaker
 
-classes = {"User": User, "State": State, "City": City, 
+classes = {"User": User, "State": State, "City": City,
            "Amenity": Amenity, "Place": Place, "Review": Review}
+
 
 class DBStorage:
     """class DBStorage"""
@@ -18,40 +23,41 @@ class DBStorage:
         HBNB_MYSQL_HOST = getenv('HBNB_MYSQL_HOST')
         HBNB_MYSQL_DB = getenv('HBNB_MYSQL_DB')
         HBNB_ENV = getenv('HBNB_ENV')
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(\
-                                       HBNB_MYSQL_USER, HBNB_MYSQL_PWD, \
-                                       HBNB_MYSQL_HOST, HBNB_MYSQL_DB, \
-                                       pool_pre_ping=True)
-       if HBNB_ENV == "test":
-           Base.metadata.drop_all(DBStorage.__engine)
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
+                                      .format(HBNB_MYSQL_USER, HBNB_MYSQL_PWD,
+                                              HBNB_MYSQL_HOST,
+                                              HBNB_MYSQL_DB,
+                                              pool_pre_ping=True))
+        if HBNB_ENV == "test":
+            Base.metadata.drop_all(self.__engine)
 
-     def all(self, cls=None):
-         """all objects depending of the class name"""
-         for clas in classes:
-             if cls is None or cls is classes[clas]:
-                 objs = DBStorage.__session.query(classes[clss]).all()
-                 for obj in objs:
-                     key = obj._class__.name__ + '.' + obj.id
-                     new_dict[key] = obj
-         return new_dict
+    def all(self, cls=None):
+        """all objects depending of the class name"""
+        new_dict = {}
+        for clas in classes:
+            if cls is None or cls is classes[clas]:
+                objs = self.__session.query(classes[clss]).all()
+                for obj in objs:
+                    key = obj.__class__.name__ + '.' + obj.id
+                    new_dict[key] = obj
+        return new_dict
 
-     def new(self, obj):
-         """add the object to the current database session"""
-           DBStorage.__session.add(obj)
+    def new(self, obj):
+        """add the object to the current database session"""
+        self.__session.add(obj)
 
-     def save(self):
-         """commit all changes of the current database session"""
-         DBStorage.__session.commit()
+    def save(self):
+        """commit all changes of the current database session"""
+        self.__session.commit()
 
-     def delete(self, obj=None):
-         """delete from the current database session"""
-         if obj is not None:
-             DBStorage.__session.delete(obj)
-     def reload(self):
-         """create all tables in the database"""
-         Base.metadata.create_all(engine)
-         ss_maker = sessionmaker(bind=self.__engine, expire_on_commit=False)
-         Session = scoped_session(ss_maker)
-         self.__session = Session
-         
+    def delete(self, obj=None):
+        """delete from the current database session"""
+        if obj is not None:
+            self.__session.delete(obj)
 
+    def reload(self):
+        """create all tables in the database"""
+        Base.metadata.create_all(engine)
+        ss_maker = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(ss_maker)
+        self.__session = Session
