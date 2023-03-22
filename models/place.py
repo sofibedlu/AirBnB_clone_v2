@@ -4,6 +4,8 @@ import models
 import sqlalchemy
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
+from models.review import Review
 
 
 class Place(BaseModel, Base):
@@ -25,6 +27,8 @@ class Place(BaseModel, Base):
                                 default=0)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
+        reviews = relationship("Review", backref="place",
+                               cascade="all, delete")
         amenity_ids = []
 
     else:
@@ -39,3 +43,13 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+
+        @property
+        def review(self):
+            """getter method"""
+            from models import storage
+            city_list = []
+            for obj in storage.all('Review').values():
+                if obj.state_id == self.id:
+                    city_list.append(obj)
+            return city_list
