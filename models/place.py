@@ -23,6 +23,7 @@ if models.db_store == "db":
 
 class Place(BaseModel, Base):
     """ A place to stay """
+    __tablename__ = "places"
     if models.db_store == "db":
         __tablename__ = "places"
         city_id = Column(String(60), ForeignKey('cities.id'),
@@ -80,7 +81,7 @@ class Place(BaseModel, Base):
                     ameni_list.append(obj)
             return ameni_list
 
-        @setter
+        @amenities.setter
         def amenities(self, obj):
             if obj is not None and isinstance(obj, Amenity):
                 if obj.id not in self.amenity_ids:

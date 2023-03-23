@@ -10,14 +10,14 @@ from sqlalchemy.orm import relationship
 
 class State(BaseModel, Base):
     """ State class """
+    __tablename__ = 'states'
     if models.db_store == "db":
-        __tablename__ = 'states'
         name = Column(String(128), nullable=False)
-        cities = relationship("City", backref="state")
+        cities = relationship("City", backref="state",
+                              cascade='all, delete')
     else:
         name = ""
 
-    if models.db_store != "db":
         @property
         def cities(self):
             """getter for list of city instance related to state"""
