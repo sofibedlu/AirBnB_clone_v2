@@ -6,7 +6,7 @@ then
         sudo apt-get update
         sudo apt-get -y install nginx
 fi
-if [ ! -d "/data" ]
+if [ ! -d "/data/" ]
 then
         sudo mkdir -p /data/
 fi
@@ -52,6 +52,11 @@ server {\n\
 }"
 
 sudo echo -e "$server_b" | sudo tee /etc/nginx/sites-available/holb2023eah4hz.tech
+
+if [ -e "/etc/nginx/sites-enabled/holb2023eah4hz.tech" ]
+then
+        sudo rm /etc/nginx/sites-enabled/holb2023eah4hz.tech
+fi
 sudo ln -s /etc/nginx/sites-available/holb2023eah4hz.tech /etc/nginx/sites-enabled/
 
 sudo service nginx restart
