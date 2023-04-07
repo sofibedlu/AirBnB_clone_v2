@@ -44,9 +44,9 @@ sudo chown -R ubuntu:ubuntu /data/
 server_b="\
 server {\n\
 \tlisten 80;\n\
-\tserver_name holb2023eah4hz.tech;\n\
+\tserver_name holb2023eah4hz.tech localhost;\n\
 \n\
-\tlocation /hbnb_static {\n\
+\tlocation /hbnb_static/ {\n\
 \t\talias /data/web_static/current/;\n\
 \t}\n\
 }"
