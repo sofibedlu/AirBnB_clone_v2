@@ -7,10 +7,13 @@ then
         sudo apt-get -y install nginx
 fi
 
+#create dir
 sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
 
+#dumy html for testing
 sudo echo "test nginx config/hello_world" | sudo tee /data/web_static/releases/test/index.html
 
+#create symbolic link
 link="/data/web_static/current"
 target="/data/web_static/releases/test"
 if [ -e "$link" ]
@@ -21,6 +24,7 @@ else
         sudo ln -sf $target $link
 fi
 
+#change ownership
 sudo chown -R ubuntu:ubuntu /data/
 
 SERVER_CONFIG=\
@@ -42,7 +46,9 @@ SERVER_CONFIG=\
 	}
 }"
 
+#update server block
 sudo bash -c "echo -e '$SERVER_CONFIG' | sudo tee /etc/nginx/sites-enabled/default"
 
+#enable server blocks
 sudo ln -sf '/etc/nginx/sites-available/default' '/etc/nginx/sites-enabled/default'
 sudo service nginx restart
