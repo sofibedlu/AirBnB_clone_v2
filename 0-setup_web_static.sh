@@ -6,26 +6,8 @@ then
         sudo apt-get update
         sudo apt-get -y install nginx
 fi
-if [ ! -d "/data/" ]
-then
-        sudo mkdir /data/
-fi
-if [ ! -d "/data/web_static/" ]
-then
-        sudo mkdir /data/web_static/
-fi
-if [ ! -d "/data/web_static/releases/" ]
-then
-        sudo mkdir /data/web_static/releases/
-fi
-if [ ! -d "/data/web_static/shared/" ]
-then
-        sudo mkdir /data/web_static/shared/
-fi
-if [ ! -d "/data/web_static/releases/test/" ]
-then
-        sudo mkdir /data/web_static/releases/test/
-fi
+
+sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
 
 sudo echo "test nginx config/hello_world" | sudo tee /data/web_static/releases/test/index.html
 
@@ -34,29 +16,33 @@ target="/data/web_static/releases/test"
 if [ -e "$link" ]
 then
         sudo rm /data/web_static/current
-        sudo ln -s $target $link
+        sudo ln -sf $target $link
 else
-        sudo ln -s $target $link
+        sudo ln -sf $target $link
 fi
 
 sudo chown -R ubuntu:ubuntu /data/
 
-server_b="\
-server {\n\
-\tlisten 80;\n\
-\tserver_name holb2023eah4hz.tech localhost;\n\
-\n\
-\tlocation /hbnb_static/ {\n\
-\t\talias /data/web_static/current/;\n\
-\t}\n\
+SERVER_CONFIG=\
+"server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	root /var/www/html;
+        error_page 404 /404.html;
+	index index.html index.htm index.nginx-debian.html;
+	server_name _;
+	if (\$request_filename ~ redirect_me){
+		rewrite ^ https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;
+	}
+	location / {
+		try_files \$uri \$uri/ =404;
+	}
+	location /hbnb_static/ {
+		alias /data/web_static/current/;
+	}
 }"
 
-sudo echo -e "$server_b" | sudo tee /etc/nginx/sites-available/holb2023eah4hz.tech
+sudo bash -c "echo -e '$SERVER_CONFIG' | sudo tee /etc/nginx/sites-enabled/default"
 
-if [ -e "/etc/nginx/sites-enabled/holb2023eah4hz.tech" ]
-then
-        sudo rm /etc/nginx/sites-enabled/holb2023eah4hz.tech
-fi
-sudo ln -s /etc/nginx/sites-available/holb2023eah4hz.tech /etc/nginx/sites-enabled/
-
+sudo ln -sf '/etc/nginx/sites-available/default' '/etc/nginx/sites-enabled/default'
 sudo service nginx restart
