@@ -47,7 +47,7 @@ SERVER_CONFIG=\
 }"
 
 #update server block
-sudo bash -c "echo -e '$SERVER_CONFIG' | sudo tee /etc/nginx/sites-enabled/default"
+sudo bash -c "echo -e '$SERVER_CONFIG' | sudo tee /etc/nginx/sites-available/default"
 
 #enable server blocks
 sudo ln -sf '/etc/nginx/sites-available/default' '/etc/nginx/sites-enabled/default'
