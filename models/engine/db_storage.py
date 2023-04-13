@@ -9,12 +9,10 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from models.state import State
 from models.city import City
 from models.user import User
-from models.place import Place
+from models.place import Place, place_amenity
 from models.review import Review
 from models.base_model import BaseModel, Base
 
-if getenv('HBNB_TYPE_STORAGE') == 'db':
-    from models.place import place_amenity
 
 classes = {"State": State, "City": City, "User": User,
            "Place": Place, "Review": Review}
@@ -36,7 +34,7 @@ class DBStorage:
                                       .format(HBNB_MYSQL_USER, HBNB_MYSQL_PWD,
                                               HBNB_MYSQL_HOST,
                                               HBNB_MYSQL_DB,
-                                              pool_pre_ping=True))
+                                              echo=True))
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
 
@@ -61,6 +59,8 @@ class DBStorage:
         if obj is not None:
             try:
                 self.__session.add(obj)
+                self.__session.flush()
+                self.__session.refresh(obj)
             except Exception as e:
                 self.__session.rollback()
                 raise e

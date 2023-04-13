@@ -8,17 +8,17 @@ from sqlalchemy.orm import relationship
 from models.review import Review
 from models.amenity import Amenity
 
-if models.db_store == "db":
-    place_amenity = Table('place_amenity', Base.metadata,
-                          Column('place_id', String(60),
-                                 ForeignKey('places.id'),
-                                 primary_key=True,
-                                 nullable=False),
-                          Column('amenity_id', String(60),
-                                 ForeignKey('amenities.id'),
-                                 primary_key=True,
-                                 nullable=False)
-                          )
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60),
+                             ForeignKey('places.id'),
+                             primary_key=True,
+                             nullable=False),
+                      Column('amenity_id', String(60),
+                             ForeignKey('amenities.id'),
+                             primary_key=True,
+                             nullable=False)
+                      )
 
 
 class Place(BaseModel, Base):
@@ -44,7 +44,7 @@ class Place(BaseModel, Base):
         reviews = relationship("Review", backref="place",
                                cascade="all, delete")
         amenity_ids = []
-        amenities = relationship("Amenity", secondary='place_amenity',
+        amenities = relationship('Amenity', secondary='place_amenity',
                                  viewonly=False, backref='place_amenities')
 
     else:
@@ -62,7 +62,10 @@ class Place(BaseModel, Base):
 
         @property
         def review(self):
-            """getter method"""
+            """returns the list of Review instances with place_id equal to
+                the current Place.id => this is FileStorage relationship
+                between Place and Review
+            """
             from models import storage
             rev_list = []
             for obj in storage.all('Review').values():
@@ -72,8 +75,10 @@ class Place(BaseModel, Base):
 
         @property
         def amenities(self):
-
-            """getter method"""
+            """returns list of Amenity instances based on based on the
+                attribute amenity_ids that contains all Amenity.id linked
+                to the Place
+            """
             from models import storage
             ameni_list = []
             for obj in storage.all('Amenity').values():
@@ -83,6 +88,10 @@ class Place(BaseModel, Base):
 
         @amenities.setter
         def amenities(self, obj):
+            """handles 'append' method for adding an Amenity.id to attribute
+                amenity_ids. this method accept only Amenity object otherwise
+                do nothing
+            """
             if obj is not None and isinstance(obj, Amenity):
                 if obj.id not in self.amenity_ids:
                     self.amenity_ids.append(obj.id)
