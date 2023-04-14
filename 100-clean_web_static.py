@@ -63,10 +63,9 @@ def deploy():
 
 
 def do_clean(number=0):
-    """clean outdated archives
-        Args:
-            number: number of the archives, including the most
-            recent, to keep
+    """Deletes out-of-date archives of the static files.
+    Args:
+        number (Any): The number of archives to keep.
     """
     global execute_local_command
     number = int(number)
