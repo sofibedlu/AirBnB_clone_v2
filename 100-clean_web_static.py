@@ -64,17 +64,11 @@ def deploy():
     return result
 
 
-class do_clean:
-    """test class"""
-    pass
-
-
-"""
 def do_clean(number=0):
-    ""/"Deletes out-of-date archives of the static files.
+    """Deletes out-of-date archives of the static files.
     Args:
         number (Any): The number of archives to keep.
-    "/""
+    """
     global execute_local_command
     number = int(number)
     if number < 0:
@@ -97,10 +91,12 @@ def do_clean(number=0):
 
     if execute_local_command:
         with lcd("./versions"):
-            ""/"execute command versions"/""
             local(command_local)
         execute_local_command = False
     with cd("/data/web_static/releases"):
-        ""/"execute command in remote"/""
         sudo(command_remote)
-        """
+
+
+class do_clean:
+    """test class"""
+    pass
