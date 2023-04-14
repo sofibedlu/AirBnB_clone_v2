@@ -64,6 +64,11 @@ def deploy():
     return result
 
 
+class do_clean:
+    """test class"""
+    pass
+
+
 """
 def do_clean(number=0):
     ""/"Deletes out-of-date archives of the static files.
