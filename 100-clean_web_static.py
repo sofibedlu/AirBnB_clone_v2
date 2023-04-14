@@ -11,11 +11,7 @@ env.key_filename = '~/.ssh/school'
 
 
 def do_clean(number=0):
-    """clean out-dated archives
-
-    Args:
-        number: the number of archives, including the most recent, to keep.
-    """
+    """clean out-dated archives"""
     global execute_local_command
     number = int(number)
     if number < 0:
