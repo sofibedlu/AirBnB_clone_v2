@@ -5,10 +5,12 @@
 from datetime import datetime
 from fabric.api import *
 
-execute_local_command = True
+"""execute_local_command = True"""
 env.hosts = ['35.174.209.16', '35.153.226.72']
+"""
 env.user = 'ubuntu'
 env.key_filename = '~/.ssh/school'
+"""
 
 
 def do_pack():
