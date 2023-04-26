@@ -11,17 +11,17 @@ from models.state import State
 app = Flask(__name__)
 
 
-@app.teardown_appcontext
-def cleanup(exc):
-    """remove current sqlalchemy session"""
-    storage.close()
-
-
 @app.route('/states_list', strict_slashes=False)
 def state():
     """display html page"""
     states = storage.all(State)
     return render_template('7-states_list.html', states=states)
+
+
+@app.teardown_appcontext
+def cleanup(exc):
+    """remove current sqlalchemy session"""
+    storage.close()
 
 
 if __name__ == "__main__":
